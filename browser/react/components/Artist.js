@@ -3,28 +3,35 @@ import Albums from './Albums';
 import Songs from './Songs';
 import {Link} from 'react-router';
 
-const Artist = (props) => {
+class Artist extends React.Component{
 
-  const selectedArtist = props.selectedArtist;
-  const children = props.children;
+  componentDidMount(){
+    const artistId = this.props.routeParams.artistId;
+    const selectArtist = this.props.selectArtist;
+    selectArtist(artistId);
+  }
 
-/*  const artistId = this.props.routeParams.artistId;
-  const selectArtist = this.props.selectArtist;
-
-  selectArtist(artistId);*/
-
-  const propsToPassToChildren = {songs: props.songs};
-
-  return (
+  render () {
+    return (
     <div>
-      <h3>{ selectedArtist.name }</h3>
+      <h3>{ this.props.selectedArtist.name }</h3>
         <ul className="nav nav-tabs">
-          <li><Link to={`/albums/${children}`}>ALBUMS</Link></li>
-          <li><Link to={`/albums/${children}`}>SONGS</Link></li>
+          <li><Link to={`/artists/${this.props.selectedArtist.id}/albums`}>ALBUMS</Link></li>
+          <li><Link to={`/artists/${this.props.selectedArtist.id}/songs`}>SONGS</Link></li>
         </ul>
-      { children && React.cloneElement(children, propsToPassToChildren) }
+      { this.props.children && React.cloneElement(this.props.children, {
+        albums: this.props.albums,
+        selectAlbum: this.props.selectAlbum,
+
+        // for songs
+        songs: this.props.songs,
+        currentSong: this.props.currentSong,
+        isPlaying: this.props.isPlaying,
+        toggleOne: this.props.toggleOne
+      }) }
     </div>
   );
-    
-};
+  }
+}
+
 export default Artist;

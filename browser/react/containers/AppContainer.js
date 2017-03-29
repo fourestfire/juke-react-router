@@ -23,13 +23,12 @@ export default class AppContainer extends Component {
     this.prev = this.prev.bind(this);
     this.selectAlbum = this.selectAlbum.bind(this);
     this.selectArtist = this.selectArtist.bind(this);
+    this.loadAllAlbums = this.loadAllAlbums.bind(this);
     // this.deselectAlbum = this.deselectAlbum.bind(this);
   }
 
   componentDidMount () {
-    axios.get('/api/albums/')
-      .then(res => res.data)
-      .then(album => this.onLoad(convertAlbums(album)));
+    this.loadAllAlbums()
 
     axios.get('/api/artists/')
       .then(res => res.data)
@@ -41,6 +40,12 @@ export default class AppContainer extends Component {
       this.next());
     AUDIO.addEventListener('timeupdate', () =>
       this.setProgress(AUDIO.currentTime / AUDIO.duration));
+  }
+
+  loadAllAlbums() {
+    axios.get('/api/albums/')
+      .then(res => res.data)
+      .then(album => this.onLoad(convertAlbums(album)));
   }
 
   onLoad (albums) {
@@ -110,7 +115,7 @@ export default class AppContainer extends Component {
       }));
   }
 
-  // The money zone 
+  // The money zone
   selectArtist (artistId) {
     const artistPromise = axios.get(`/api/artists/${artistId}`)
       .then(res => res.data);
@@ -137,7 +142,7 @@ export default class AppContainer extends Component {
     return (
       <div id="main" className="container-fluid">
         <div className="col-xs-2">
-          <Sidebar />
+          <Sidebar loadAllAlbums={this.loadAllAlbums}/>
         </div>
 
       {/* Frame */}

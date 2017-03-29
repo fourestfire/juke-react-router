@@ -7,7 +7,6 @@ const Albums = (props) => {
 
   const albums = props.albums;
   const selectAlbum = props.selectAlbum;
-  console.log("albums", albums);
 
   return (
     <div>
