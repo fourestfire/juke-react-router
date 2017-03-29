@@ -1,30 +1,31 @@
 import React from 'react';
-import {Link} from 'react-router';
 import ArtistSongs from './ArtistSongs';
-import ArtistAlbums from './ArtistAlbums';
 import Albums from './Albums';
 
 class Artist extends React.Component{
+/*  constructor(props){
+    super(props)
+  }*/
 
   componentDidMount(){
-    const albumId = this.props.routeParams.albumId;
-    const selectAlbum = this.props.selectAlbum;
+    const artistId = this.props.routeParams.artistId;
+    const selectArtist = this.props.selectArtist;
 
-    selectAlbum(albumId);
+    selectArtist(artistId);
+
   }
 
-const Artist = (props) => {
+  render () {
+    return (
+      <div>
+        <h3>{this.props.selectedArtist.name}</h3>
+        <Albums />
+        <ArtistSongs />
+      </div>
+    );
+    
+  }
 
-  const selectedArtist = props.selectedArtist;
-
-  return (
-    <div>
-      <h3>{selectedArtist.name}</h3>
-      <h4><Albums /></h4>
-      <h4><ArtistSongs /></h4>
-    </div>
-  )
 }
-
 
 export default Artist;

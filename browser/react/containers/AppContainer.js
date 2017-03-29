@@ -111,22 +111,21 @@ export default class AppContainer extends Component {
   }
 
   selectArtist (artistId) {
-    axios.get(`/api/artists/${artistId}`)
+    const artistPromise = axios.get(`/api/artists/${artistId}`)
+      .then(res => res.data);
+
+    const albumsPromise = axios.get(`/api/artists/${artistId}/albums`)
       .then(res => res.data)
-      .then(artist => {
-        this.setState({
-        selectedArtist: artist
-        })
+      .then(album => convertAlbums(album));
+
+    Promise.all([artistPromise, albumsPromise]).then(values => {
+      this.setState({
+        selectedArtist: values[0],
+        albums: values[1]
       })
-    .then(axios.get(`/api/artists/${artistId}/albums`)
-      .then(res => res.data)
-      .then(album => {
-        console.log("prevstate albums", this.state.albums)
-        console.log('within axios get for selectartist', album)
-        this.onLoad(convertAlbums(album))
-        console.log("newstate albums", this.state.albums)
-    })
-    )
+      console.log('state', this.state);
+    });
+
   }
 
   render () {
