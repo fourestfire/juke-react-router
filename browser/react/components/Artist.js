@@ -1,32 +1,30 @@
 import React from 'react';
 import Albums from './Albums';
 import Songs from './Songs';
+import {Link} from 'react-router';
 
-class Artist extends React.Component{
-/*  constructor(props){
-    super(props)
-  }*/
+const Artist = (props) => {
 
-  componentDidMount(){
-    const artistId = this.props.routeParams.artistId;
-    const selectArtist = this.props.selectArtist;
+  const selectedArtist = props.selectedArtist;
+  const children = props.children;
 
-    selectArtist(artistId);
+/*  const artistId = this.props.routeParams.artistId;
+  const selectArtist = this.props.selectArtist;
 
-  }
+  selectArtist(artistId);*/
 
-  render () {
-    return (
-      <div>
-        <h3>{this.props.selectedArtist.name}</h3>
-        {/* we HAVE TO PASS PROPS MANUALLY because Albums
-        and Songs are children of Artist (in this instance) */}
-        <Albums {...this.props} />
-        <Songs {...this.props} />
-      </div>
-    );
+  const propsToPassToChildren = {songs: props.songs};
+
+  return (
+    <div>
+      <h3>{ selectedArtist.name }</h3>
+        <ul className="nav nav-tabs">
+          <li><Link to={`/albums/${children}`}>ALBUMS</Link></li>
+          <li><Link to={`/albums/${children}`}>SONGS</Link></li>
+        </ul>
+      { children && React.cloneElement(children, propsToPassToChildren) }
+    </div>
+  );
     
-  }
-
-}
+};
 export default Artist;
