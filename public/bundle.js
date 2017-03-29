@@ -68,18 +68,38 @@
 	
 	var _Album2 = _interopRequireDefault(_Album);
 	
+	var _Artists = __webpack_require__(267);
+	
+	var _Artists2 = _interopRequireDefault(_Artists);
+	
+	var _Artist = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./components/Artist\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	
+	var _Artist2 = _interopRequireDefault(_Artist);
+	
+	var _ArtistSongs = __webpack_require__(269);
+	
+	var _ArtistSongs2 = _interopRequireDefault(_ArtistSongs);
+	
+	var _ArtistAlbums = __webpack_require__(270);
+	
+	var _ArtistAlbums2 = _interopRequireDefault(_ArtistAlbums);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	_reactDom2.default.render(_react2.default.createElement(
-	  _reactRouter.Router,
-	  { history: _reactRouter.hashHistory },
-	  _react2.default.createElement(
-	    _reactRouter.Route,
-	    { path: '/', component: _AppContainer2.default },
-	    _react2.default.createElement(_reactRouter.IndexRedirect, { to: '/albums' }),
-	    _react2.default.createElement(_reactRouter.Route, { path: '/albums', component: _Albums2.default }),
-	    _react2.default.createElement(_reactRouter.Route, { path: '/albums/:albumId', component: _Album2.default })
-	  )
+			_reactRouter.Router,
+			{ history: _reactRouter.hashHistory },
+			_react2.default.createElement(
+					_reactRouter.Route,
+					{ path: '/', component: _AppContainer2.default },
+					_react2.default.createElement(_reactRouter.IndexRedirect, { to: '/albums' }),
+					_react2.default.createElement(_reactRouter.Route, { path: '/albums', component: _Albums2.default }),
+					_react2.default.createElement(_reactRouter.Route, { path: '/albums/:albumId', component: _Album2.default }),
+					_react2.default.createElement(_reactRouter.Route, { path: '/artists', component: _Artists2.default }),
+					_react2.default.createElement(_reactRouter.Route, { path: '/artists/:artistId', component: _Artist2.default }),
+					_react2.default.createElement(_reactRouter.Route, { path: '/artists/:artistId/albums', component: _Albums2.default }),
+					_react2.default.createElement(_reactRouter.Route, { path: '/artists/:artistId/songs', component: _ArtistSongs2.default })
+			)
 	), document.getElementById('app'));
 
 /***/ },
@@ -26615,6 +26635,7 @@
 	    _this.next = _this.next.bind(_this);
 	    _this.prev = _this.prev.bind(_this);
 	    _this.selectAlbum = _this.selectAlbum.bind(_this);
+	    _this.selectArtist = _this.selectArtist.bind(_this);
 	    // this.deselectAlbum = this.deselectAlbum.bind(this);
 	    return _this;
 	  }
@@ -26628,6 +26649,12 @@
 	        return res.data;
 	      }).then(function (album) {
 	        return _this2.onLoad((0, _utils.convertAlbums)(album));
+	      });
+	
+	      _axios2.default.get('/api/artists/').then(function (res) {
+	        return res.data;
+	      }).then(function (artists) {
+	        _this2.setState({ artists: artists });
 	      });
 	
 	      _audio2.default.addEventListener('ended', function () {
@@ -26718,6 +26745,26 @@
 	      });
 	    }
 	  }, {
+	    key: 'selectArtist',
+	    value: function selectArtist(artistId) {
+	      var _this4 = this;
+	
+	      _axios2.default.get('/api/artists/' + artistId).then(function (res) {
+	        return res.data;
+	      }).then(function (artist) {
+	        _this4.setState({
+	          selectedArtist: artist
+	        });
+	      }).then(_axios2.default.get('/api/artists/' + artistId + '/albums').then(function (res) {
+	        return res.data;
+	      }).then(function (album) {
+	        console.log("prevstate albums", _this4.state.albums);
+	        console.log('within axios get for selectartist', album);
+	        _this4.onLoad((0, _utils.convertAlbums)(album));
+	        console.log("newstate albums", _this4.state.albums);
+	      }));
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
@@ -26741,7 +26788,15 @@
 	
 	            /* albumS props */
 	            albums: this.state.albums,
-	            selectAlbum: this.selectAlbum
+	            selectAlbum: this.selectAlbum,
+	
+	            /* artists props */
+	            artists: this.state.artists,
+	            selectArtist: this.selectArtist,
+	
+	            /* artist props */
+	            selectedArtist: this.state.selectedArtist
+	
 	          })
 	        ),
 	        _react2.default.createElement(_Player2.default, {
@@ -28266,7 +28321,9 @@
 	  currentSong: {},
 	  currentSongList: [],
 	  isPlaying: false,
-	  progress: 0
+	  progress: 0,
+	  artists: [],
+	  selectedArtist: {}
 	};
 	
 	exports.default = initialState;
@@ -28305,6 +28362,8 @@
 	
 	  var albums = props.albums;
 	  var selectAlbum = props.selectAlbum;
+	  console.log("albumsprops", props);
+	  console.log("albumsthis", undefined);
 	
 	  return _react2.default.createElement(
 	    'div',
@@ -28563,6 +28622,15 @@
 	          { to: '/albums' },
 	          'ALBUMS'
 	        )
+	      ),
+	      _react2.default.createElement(
+	        'h4',
+	        { className: 'menu-item' },
+	        _react2.default.createElement(
+	          _reactRouter.Link,
+	          { to: '/artists' },
+	          'ARTISTS'
+	        )
 	      )
 	    )
 	  );
@@ -28681,6 +28749,126 @@
 	  var next = currentSongList[idx];
 	  return [next, currentSongList];
 	};
+
+/***/ },
+/* 267 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRouter = __webpack_require__(178);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Artists = function Artists(props) {
+	
+	  var artists = props.artists;
+	  var selectArtist = props.selectArtist;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(
+	      'h3',
+	      null,
+	      'Artists'
+	    ),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'list-group' },
+	      artists.map(function (artist) {
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'list-group-item', key: artist.id },
+	          _react2.default.createElement(
+	            _reactRouter.Link,
+	            { to: '/artists/' + artist.id, onClick: function onClick() {
+	                return selectArtist(artist.id);
+	              } },
+	            artist.name
+	          )
+	        );
+	      })
+	    )
+	  );
+	};
+	
+	exports.default = Artists;
+
+/***/ },
+/* 268 */,
+/* 269 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRouter = __webpack_require__(178);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ArtistSongs = function ArtistSongs(props) {
+	
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(
+	      'h1',
+	      null,
+	      ' doublehello!!! '
+	    )
+	  );
+	};
+	
+	exports.default = ArtistSongs;
+
+/***/ },
+/* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRouter = __webpack_require__(178);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ArtistAlbums = function ArtistAlbums(props) {
+	
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(
+	      'h1',
+	      null,
+	      ' hello!!! '
+	    )
+	  );
+	};
+	
+	exports.default = ArtistAlbums;
 
 /***/ }
 /******/ ]);

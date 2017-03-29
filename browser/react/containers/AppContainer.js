@@ -22,6 +22,7 @@ export default class AppContainer extends Component {
     this.next = this.next.bind(this);
     this.prev = this.prev.bind(this);
     this.selectAlbum = this.selectAlbum.bind(this);
+    this.selectArtist = this.selectArtist.bind(this);
     // this.deselectAlbum = this.deselectAlbum.bind(this);
   }
 
@@ -29,6 +30,12 @@ export default class AppContainer extends Component {
     axios.get('/api/albums/')
       .then(res => res.data)
       .then(album => this.onLoad(convertAlbums(album)));
+
+    axios.get('/api/artists/')
+      .then(res => res.data)
+      .then(artists => {
+        this.setState({artists: artists})
+      })
 
     AUDIO.addEventListener('ended', () =>
       this.next());
@@ -103,7 +110,24 @@ export default class AppContainer extends Component {
       }));
   }
 
-
+  selectArtist (artistId) {
+    axios.get(`/api/artists/${artistId}`)
+      .then(res => res.data)
+      .then(artist => {
+        this.setState({
+        selectedArtist: artist
+        })
+      })
+    .then(axios.get(`/api/artists/${artistId}/albums`)
+      .then(res => res.data)
+      .then(album => {
+        console.log("prevstate albums", this.state.albums)
+        console.log('within axios get for selectartist', album)
+        this.onLoad(convertAlbums(album))
+        console.log("newstate albums", this.state.albums)
+    })
+    )
+  }
 
   render () {
     return (
@@ -126,7 +150,15 @@ export default class AppContainer extends Component {
 
               /* albumS props */
               albums: this.state.albums,
-              selectAlbum: this.selectAlbum
+              selectAlbum: this.selectAlbum,
+
+              /* artists props */
+              artists: this.state.artists,
+              selectArtist: this.selectArtist,
+
+              /* artist props */
+              selectedArtist: this.state.selectedArtist
+
             }))
           }
         </div>
