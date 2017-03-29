@@ -76,14 +76,6 @@
 	
 	var _Artist2 = _interopRequireDefault(_Artist);
 	
-	var _ArtistSongs = __webpack_require__(269);
-	
-	var _ArtistSongs2 = _interopRequireDefault(_ArtistSongs);
-	
-	var _ArtistAlbums = __webpack_require__(270);
-	
-	var _ArtistAlbums2 = _interopRequireDefault(_ArtistAlbums);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	_reactDom2.default.render(_react2.default.createElement(
@@ -96,9 +88,7 @@
 					_react2.default.createElement(_reactRouter.Route, { path: '/albums', component: _Albums2.default }),
 					_react2.default.createElement(_reactRouter.Route, { path: '/albums/:albumId', component: _Album2.default }),
 					_react2.default.createElement(_reactRouter.Route, { path: '/artists', component: _Artists2.default }),
-					_react2.default.createElement(_reactRouter.Route, { path: '/artists/:artistId', component: _Artist2.default }),
-					_react2.default.createElement(_reactRouter.Route, { path: '/artists/:artistId/albums', component: _Albums2.default }),
-					_react2.default.createElement(_reactRouter.Route, { path: '/artists/:artistId/songs', component: _ArtistSongs2.default })
+					_react2.default.createElement(_reactRouter.Route, { path: '/artists/:artistId', component: _Artist2.default })
 			)
 	), document.getElementById('app'));
 
@@ -26744,6 +26734,9 @@
 	        });
 	      });
 	    }
+	
+	    // The money zone 
+	
 	  }, {
 	    key: 'selectArtist',
 	    value: function selectArtist(artistId) {
@@ -26759,12 +26752,18 @@
 	        return (0, _utils.convertAlbums)(album);
 	      });
 	
-	      Promise.all([artistPromise, albumsPromise]).then(function (values) {
+	      var songsPromise = _axios2.default.get('/api/artists/' + artistId + '/songs').then(function (res) {
+	        return res.data;
+	      }).then(function (song) {
+	        return (0, _utils.convertSongs)(song);
+	      });
+	
+	      Promise.all([artistPromise, albumsPromise, songsPromise]).then(function (values) {
 	        _this4.setState({
 	          selectedArtist: values[0],
-	          albums: values[1]
+	          albums: values[1],
+	          songs: values[2]
 	        });
-	        console.log('state', _this4.state);
 	      });
 	    }
 	  }, {
@@ -26798,7 +26797,10 @@
 	            selectArtist: this.selectArtist,
 	
 	            /* artist props */
-	            selectedArtist: this.state.selectedArtist
+	            selectedArtist: this.state.selectedArtist,
+	
+	            /* Songs */
+	            songs: this.state.songs
 	
 	          })
 	        ),
@@ -28322,6 +28324,7 @@
 	  albums: [],
 	  selectedAlbum: {},
 	  currentSong: {},
+	  songs: [],
 	  currentSongList: [],
 	  isPlaying: false,
 	  progress: 0,
@@ -28361,6 +28364,8 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	// props only comes from the parent componnent so we have to make sure
+	// to manually pass props to Albums FROM the parent
 	var Albums = function Albums(props) {
 	
 	  var albums = props.albums;
@@ -28378,7 +28383,7 @@
 	    _react2.default.createElement(
 	      'div',
 	      { className: 'row' },
-	      albums && albums.map(function (album) {
+	      albums.map(function (album) {
 	        return _react2.default.createElement(
 	          'div',
 	          { className: 'col-xs-4', key: album.id },
@@ -28720,6 +28725,12 @@
 	  return song;
 	};
 	
+	var convertSongs = exports.convertSongs = function convertSongs(songsArr) {
+	  return songsArr.map(function (song) {
+	    return convertSong(song);
+	  });
+	};
+	
 	var convertAlbum = exports.convertAlbum = function convertAlbum(album) {
 	  album.imageUrl = "/api/albums/" + album.id + "/image";
 	  album.songs = album.songs.map(convertSong);
@@ -28821,13 +28832,13 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _ArtistSongs = __webpack_require__(269);
-	
-	var _ArtistSongs2 = _interopRequireDefault(_ArtistSongs);
-	
 	var _Albums = __webpack_require__(261);
 	
 	var _Albums2 = _interopRequireDefault(_Albums);
+	
+	var _Songs = __webpack_require__(263);
+	
+	var _Songs2 = _interopRequireDefault(_Songs);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -28870,8 +28881,8 @@
 	          null,
 	          this.props.selectedArtist.name
 	        ),
-	        _react2.default.createElement(_Albums2.default, null),
-	        _react2.default.createElement(_ArtistSongs2.default, null)
+	        _react2.default.createElement(_Albums2.default, this.props),
+	        _react2.default.createElement(_Songs2.default, this.props)
 	      );
 	    }
 	  }]);
@@ -28880,72 +28891,6 @@
 	}(_react2.default.Component);
 	
 	exports.default = Artist;
-
-/***/ },
-/* 269 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRouter = __webpack_require__(178);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var ArtistSongs = function ArtistSongs(props) {
-	
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    _react2.default.createElement(
-	      'h1',
-	      null,
-	      ' doublehello!!! '
-	    )
-	  );
-	};
-	
-	exports.default = ArtistSongs;
-
-/***/ },
-/* 270 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRouter = __webpack_require__(178);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var ArtistAlbums = function ArtistAlbums(props) {
-	
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    _react2.default.createElement(
-	      'h1',
-	      null,
-	      ' hello!!! '
-	    )
-	  );
-	};
-	
-	exports.default = ArtistAlbums;
 
 /***/ }
 /******/ ]);

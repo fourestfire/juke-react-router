@@ -1,6 +1,8 @@
 import React from 'react';
 import {Link} from 'react-router';
 
+// props only comes from the parent componnent so we have to make sure
+// to manually pass props to Albums FROM the parent
 const Albums = (props) => {
 
   const albums = props.albums;
@@ -12,7 +14,7 @@ const Albums = (props) => {
       <h3>Albums</h3>
       <div className="row">
       {
-        albums && albums.map(album => (
+        albums.map(album => (
           <div className="col-xs-4" key={ album.id }>
              <Link className="thumbnail" onClick={() => selectAlbum(album.id)} to={`/albums/${album.id}`}>
               <img src={ album.imageUrl } />
@@ -29,6 +31,6 @@ const Albums = (props) => {
       </div>
     </div>
   );
-}
+};
 
 export default Albums;

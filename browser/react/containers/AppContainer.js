@@ -9,7 +9,7 @@ import Album from '../components/Album';
 import Sidebar from '../components/Sidebar';
 import Player from '../components/Player';
 
-import { convertAlbum, convertAlbums, skip } from '../utils';
+import { convertAlbum, convertAlbums, skip, convertSongs } from '../utils';
 
 export default class AppContainer extends Component {
 
@@ -110,6 +110,7 @@ export default class AppContainer extends Component {
       }));
   }
 
+  // The money zone 
   selectArtist (artistId) {
     const artistPromise = axios.get(`/api/artists/${artistId}`)
       .then(res => res.data);
@@ -118,12 +119,16 @@ export default class AppContainer extends Component {
       .then(res => res.data)
       .then(album => convertAlbums(album));
 
-    Promise.all([artistPromise, albumsPromise]).then(values => {
+    const songsPromise = axios.get(`/api/artists/${artistId}/songs`)
+      .then(res => res.data)
+      .then(song => convertSongs(song));
+
+    Promise.all([artistPromise, albumsPromise, songsPromise]).then(values => {
       this.setState({
         selectedArtist: values[0],
-        albums: values[1]
+        albums: values[1],
+        songs: values[2]
       })
-      console.log('state', this.state);
     });
 
   }
@@ -156,7 +161,10 @@ export default class AppContainer extends Component {
               selectArtist: this.selectArtist,
 
               /* artist props */
-              selectedArtist: this.state.selectedArtist
+              selectedArtist: this.state.selectedArtist,
+
+              /* Songs */
+              songs: this.state.songs
 
             }))
           }

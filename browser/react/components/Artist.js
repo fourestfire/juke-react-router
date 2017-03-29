@@ -1,6 +1,6 @@
 import React from 'react';
-import ArtistSongs from './ArtistSongs';
 import Albums from './Albums';
+import Songs from './Songs';
 
 class Artist extends React.Component{
 /*  constructor(props){
@@ -19,13 +19,14 @@ class Artist extends React.Component{
     return (
       <div>
         <h3>{this.props.selectedArtist.name}</h3>
-        <Albums />
-        <ArtistSongs />
+        {/* we HAVE TO PASS PROPS MANUALLY because Albums
+        and Songs are children of Artist (in this instance) */}
+        <Albums {...this.props} />
+        <Songs {...this.props} />
       </div>
     );
     
   }
 
 }
-
 export default Artist;
